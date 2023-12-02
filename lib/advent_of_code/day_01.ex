@@ -1,6 +1,7 @@
 defmodule AdventOfCode.Day01 do
   def part1(calibration_document) do
     calibration_document
+    |> String.trim()
     |> String.split()
     |> Enum.reduce(0, fn line, acc ->
       numbers =
@@ -20,8 +21,8 @@ defmodule AdventOfCode.Day01 do
         end)
 
       acc +
-        (List.first(numbers, 0) * 10 +
-           List.last(numbers, 0))
+        (List.first(numbers) * 10 +
+           List.last(numbers))
     end)
   end
 
