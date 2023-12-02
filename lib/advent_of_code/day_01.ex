@@ -27,46 +27,42 @@ defmodule AdventOfCode.Day01 do
 
   def part2(calibration_document) do
     calibration_document
+    |> String.trim()
     |> String.split("\n")
     |> Enum.reduce(0, fn line, acc ->
       high =
-        Regex.scan(~r/one|two|three|four|five|six|seven|eight|nine|\d/i, line)
-        |> Enum.flat_map(& &1)
-        |> Enum.map(fn
-          "one" -> 1
-          "two" -> 2
-          "three" -> 3
-          "four" -> 4
-          "five" -> 5
-          "six" -> 6
-          "seven" -> 7
-          "eight" -> 8
-          "nine" -> 9
-          digit -> String.to_integer(digit)
-        end)
-        |> List.first(0)
-        |> Kernel.*(10)
+        Regex.run(~r/one|two|three|four|five|six|seven|eight|nine|\d/i, line)
+        |> hd()
+        |> then(&to_integer/1)
 
       low =
         line
         |> String.reverse()
-        |> then(&Regex.scan(~r/eno|owt|eerht|ruof|evif|xis|neves|thgie|enin|\d/i, &1))
-        |> Enum.flat_map(& &1)
-        |> Enum.map(fn
-          "eno" -> 1
-          "owt" -> 2
-          "eerht" -> 3
-          "ruof" -> 4
-          "evif" -> 5
-          "xis" -> 6
-          "neves" -> 7
-          "thgie" -> 8
-          "enin" -> 9
-          digit -> String.to_integer(digit)
-        end)
-        |> List.first(0)
+        |> then(&Regex.run(~r/eno|owt|eerht|ruof|evif|xis|neves|thgie|enin|\d/i, &1))
+        |> hd()
+        |> then(&to_integer/1)
 
-      acc + high + low
+      acc + high * 10 + low
     end)
   end
+
+  defp to_integer("one"), do: 1
+  defp to_integer("eno"), do: 1
+  defp to_integer("two"), do: 2
+  defp to_integer("owt"), do: 2
+  defp to_integer("three"), do: 3
+  defp to_integer("eerht"), do: 3
+  defp to_integer("four"), do: 4
+  defp to_integer("ruof"), do: 4
+  defp to_integer("five"), do: 5
+  defp to_integer("evif"), do: 5
+  defp to_integer("six"), do: 6
+  defp to_integer("xis"), do: 6
+  defp to_integer("seven"), do: 7
+  defp to_integer("neves"), do: 7
+  defp to_integer("eight"), do: 8
+  defp to_integer("thgie"), do: 8
+  defp to_integer("nine"), do: 9
+  defp to_integer("enin"), do: 9
+  defp to_integer(digit), do: String.to_integer(digit)
 end
