@@ -1,18 +1,22 @@
 defmodule AdventOfCode.Day01 do
   def part1(calibration_document) do
     calibration_document
-    |> String.split("\n")
+    |> String.split()
     |> Enum.reduce(0, fn line, acc ->
       numbers =
         line
         |> String.split("")
-        |> Enum.flat_map(fn str ->
-          str
-          |> Integer.parse()
-          |> case do
-            {num, _} -> [num]
-            _ -> []
-          end
+        |> Enum.flat_map(fn
+          "1" -> [1]
+          "2" -> [2]
+          "3" -> [3]
+          "4" -> [4]
+          "5" -> [5]
+          "6" -> [6]
+          "7" -> [7]
+          "8" -> [8]
+          "9" -> [9]
+          _ -> []
         end)
 
       acc +
