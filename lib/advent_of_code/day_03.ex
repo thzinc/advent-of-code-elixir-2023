@@ -24,12 +24,24 @@ defmodule AdventOfCode.Day03 do
           {:part_number, unique_part_number_instance, all_coordinates}
 
         [{-1, 0}, {start, length} = _symbol_index] ->
-          coordinates =
-            (start - 1)..(start + length)
+          left = start - 1
+          right = start + length
+
+          vertical =
+            left..right
             |> Enum.flat_map(fn x ->
-              (line_number - 1)..(line_number + 1)
-              |> Enum.map(fn y -> {x, y} end)
+              top = {x, line_number - 1}
+              bottom = {x, line_number + 1}
+              [top, bottom]
             end)
+
+          sides = [
+            {left, line_number},
+            {right, line_number}
+          ]
+
+          coordinates =
+            (vertical ++ sides)
             |> MapSet.new()
 
           {:allowed_coordinates, coordinates}
@@ -63,8 +75,7 @@ defmodule AdventOfCode.Day03 do
         unique_part_number_instance
       end)
       |> Enum.uniq()
-      |> Enum.map(fn {part_number, _} -> part_number end)
-      |> Enum.reduce(0, &Kernel.+/2)
+      |> Enum.reduce(0, fn {part_number, _}, acc -> part_number + acc end)
     end)
   end
 
