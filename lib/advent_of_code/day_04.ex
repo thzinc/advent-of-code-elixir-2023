@@ -15,7 +15,7 @@ defmodule AdventOfCode.Day04 do
         end)
 
       MapSet.intersection(needles, haystack)
-      |> Enum.count()
+      |> MapSet.size()
       |> case do
         0 -> 0
         count -> 2 ** (count - 1)
@@ -40,7 +40,7 @@ defmodule AdventOfCode.Day04 do
         end)
 
       MapSet.intersection(needles, haystack)
-      |> Enum.count()
+      |> MapSet.size()
     end)
     |> Enum.reduce({0, []}, fn wins_per_card, {num_cards, extra_copy_buffer} ->
       {extra_copies, extra_copy_buffer} =
@@ -53,8 +53,6 @@ defmodule AdventOfCode.Day04 do
 
       total_copies = 1 + extra_copies
 
-      num_cards = num_cards + total_copies
-
       existing_buffer =
         extra_copy_buffer
         |> Enum.with_index()
@@ -65,15 +63,14 @@ defmodule AdventOfCode.Day04 do
               else: 0
         end)
 
-      new_buffer =
-        if length(extra_copy_buffer) < wins_per_card do
-          1..(wins_per_card - length(extra_copy_buffer))
-          |> Enum.map(fn _ -> total_copies end)
-        else
-          []
-        end
+      new_buffer_length = wins_per_card - length(extra_copy_buffer)
 
-      extra_copy_buffer = existing_buffer ++ new_buffer
+      extra_copy_buffer =
+        if new_buffer_length > 0,
+          do: existing_buffer ++ List.duplicate(total_copies, new_buffer_length),
+          else: existing_buffer
+
+      num_cards = num_cards + total_copies
 
       {num_cards, extra_copy_buffer}
     end)
