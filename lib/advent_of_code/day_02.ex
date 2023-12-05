@@ -1,5 +1,5 @@
 defmodule AdventOfCode.Day02 do
-  def part1(games, opts \\ []) do
+  def part1(games, opts) do
     Regex.scan(~r/(Game (?<id>\d+): (?<outcomes>.+)$)+/im, games, capture: :all_names)
     |> Enum.reduce(0, fn [id, outcomes], acc ->
       outcomes
