@@ -46,8 +46,10 @@ defmodule AdventOfCode.Day06 do
         |> Kernel.+(1)
         |> trunc()
 
-      rate_to_beat..time
-      |> Enum.count(fn rate -> (time - rate) * rate > distance end)
+      time..rate_to_beat
+      |> Enum.take_while(fn rate -> (time - rate) * rate <= distance end)
+      |> Enum.count()
+      |> then(fn high_end_losses -> time - high_end_losses - rate_to_beat + 1 end)
     end)
   end
 end
