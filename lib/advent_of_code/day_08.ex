@@ -90,28 +90,29 @@ defmodule AdventOfCode.Day08 do
 
     starting_nodes |> IO.inspect(label: "starting nodes")
 
-    movement
-    |> Enum.reduce_while({0, starting_nodes}, fn move, {count, nodes} ->
-      {next_nodes, all_end_nodes} =
-        nodes
-        |> Enum.reduce({[], true}, fn node, {next_nodes, all_end_nodes} ->
-          next_node = get_in(network, [node, move])
+    starting_nodes
+    |> Enum.map(fn starting_node ->
+      movement
+      |> Enum.reduce_while({0, starting_node}, fn move, {count, node} ->
+        next_node =
+          network
+          |> Map.get(node)
+          |> Map.get(move)
 
-          {
-            [next_node | next_nodes],
-            all_end_nodes and String.ends_with?(next_node, "Z")
-          }
-        end)
-
-      if rem(count, 10_000_000) == 0 do
-        next_nodes |> IO.inspect(label: "count #{count}")
-      end
-
-      if all_end_nodes do
-        {:halt, count + 1}
-      else
-        {:cont, {count + 1, next_nodes}}
-      end
+        if String.ends_with?(next_node, "Z") do
+          {:halt, count + 1}
+        else
+          {:cont, {count + 1, next_node}}
+        end
+      end)
     end)
+    |> Enum.reduce(1, &lcm/2)
+    |> trunc()
   end
+
+  defp gcd(a, 0), do: a
+  defp gcd(0, b), do: b
+  defp gcd(a, b), do: gcd(b, rem(trunc(a), trunc(b)))
+  defp lcm(0, 0), do: 0
+  defp lcm(a, b), do: a * b / gcd(a, b)
 end
