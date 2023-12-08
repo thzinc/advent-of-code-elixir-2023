@@ -3,12 +3,22 @@ defmodule AdventOfCode.Day08Test do
 
   import AdventOfCode.Day08
 
-  @tag :skip
   test "part1" do
-    input = nil
+    input = """
+    RL
+
+    AAA = (BBB, CCC)
+    BBB = (DDD, EEE)
+    CCC = (ZZZ, GGG)
+    DDD = (DDD, DDD)
+    EEE = (EEE, EEE)
+    GGG = (GGG, GGG)
+    ZZZ = (ZZZ, ZZZ)
+    """
+
     result = part1(input)
 
-    assert result
+    assert result == 2
   end
 
   @tag :skip
