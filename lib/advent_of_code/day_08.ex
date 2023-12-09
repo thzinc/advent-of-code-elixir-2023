@@ -88,8 +88,6 @@ defmodule AdventOfCode.Day08 do
           {movement, network, starting_nodes}
       end)
 
-    starting_nodes |> IO.inspect(label: "starting nodes")
-
     starting_nodes
     |> Enum.map(fn starting_node ->
       movement
