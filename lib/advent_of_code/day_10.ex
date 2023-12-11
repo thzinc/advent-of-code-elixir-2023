@@ -145,46 +145,46 @@ defmodule AdventOfCode.Day10 do
       |> MapSet.new()
       |> MapSet.difference(loop)
 
-    lines
-    |> Enum.flat_map(fn {{x1, y1}, {x2, y2}} when y1 == y2 ->
-      x1..x2
-      |> Enum.map(fn x -> {x, y1} end)
-    end)
-    |> Enum.map(fn coord -> {coord, "░"} end)
-    |> Enum.into(%{})
-    |> plot()
-    |> IO.puts()
+    # lines
+    # |> Enum.flat_map(fn {{x1, y1}, {x2, y2}} when y1 == y2 ->
+    #   x1..x2
+    #   |> Enum.map(fn x -> {x, y1} end)
+    # end)
+    # |> Enum.map(fn coord -> {coord, "░"} end)
+    # |> Enum.into(%{})
+    # |> plot()
+    # |> IO.puts()
 
-    ((loop
-      |> Enum.map(fn coord -> {coord, "░"} end)) ++
-       (enclosed
-        |> Enum.map(fn coord -> {coord, "▓"} end)))
-    |> Enum.into(%{})
-    |> plot()
-    |> IO.puts()
+    # ((loop
+    #   |> Enum.map(fn coord -> {coord, "░"} end)) ++
+    #    (enclosed
+    #     |> Enum.map(fn coord -> {coord, "▓"} end)))
+    # |> Enum.into(%{})
+    # |> plot()
+    # |> IO.puts()
 
     MapSet.size(enclosed)
   end
 
-  defp plot(mapped_coords) do
-    {{x1, y1}, {x2, y2}} =
-      mapped_coords
-      |> Map.keys()
-      |> bounding_box()
+  # defp plot(mapped_coords) do
+  #   {{x1, y1}, {x2, y2}} =
+  #     mapped_coords
+  #     |> Map.keys()
+  #     |> bounding_box()
 
-    body =
-      y1..y2
-      |> Enum.map(fn y ->
-        x1..x2
-        |> Enum.map(fn x ->
-          Map.get(mapped_coords, {x, y}, " ")
-        end)
-        |> Enum.join("")
-      end)
+  #   body =
+  #     y1..y2
+  #     |> Enum.map(fn y ->
+  #       x1..x2
+  #       |> Enum.map(fn x ->
+  #         Map.get(mapped_coords, {x, y}, " ")
+  #       end)
+  #       |> Enum.join("")
+  #     end)
 
-    ["\n\n" | body]
-    |> Enum.join("\n")
-  end
+  #   ["\n\n" | body]
+  #   |> Enum.join("\n")
+  # end
 
   defp surrounding_coords({x, y} = _coord) do
     north = {x, y - 1}
