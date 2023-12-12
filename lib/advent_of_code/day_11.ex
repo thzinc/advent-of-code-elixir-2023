@@ -18,25 +18,11 @@ defmodule AdventOfCode.Day11 do
 
     galaxies
     |> get_lines()
-    |> Enum.map(fn {{x1, y1}, {x2, y2}} ->
-      cond do
-        x1 == x2 ->
-          max(y1, y2) - min(y1, y2)
-
-        y1 == y2 ->
-          max(x1, x2) - min(x1, x2)
-
-        true ->
-          a = max(x1, x2) - min(x1, x2)
-          b = max(y1, y2) - min(y1, y2)
-
-          a + b
-      end
-    end)
+    |> Enum.map(&get_distance/1)
     |> Enum.reduce(0, &+/2)
   end
 
-  defp expand_coordinates(coords) do
+  defp expand_coordinates(coords, scale \\ 2) do
     {xs, ys, {min_x, min_y}, {max_x, max_y}} =
       coords
       |> Enum.reduce({nil, nil, nil, nil}, fn
@@ -57,8 +43,8 @@ defmodule AdventOfCode.Day11 do
           }
       end)
 
-    x_map = build_mapping(min_x, max_x, xs)
-    y_map = build_mapping(min_y, max_y, ys)
+    x_map = build_mapping(min_x, max_x, xs, scale - 1)
+    y_map = build_mapping(min_y, max_y, ys, scale - 1)
 
     coords
     |> Enum.map(fn {x, y} ->
@@ -66,15 +52,15 @@ defmodule AdventOfCode.Day11 do
     end)
   end
 
-  defp build_mapping(min, max, set) do
+  defp build_mapping(min, max, set, offset_increment) do
     {_, mapping} =
       min..max
-      |> Enum.reduce({min * 2, %{}}, fn a, {offset, mapping} ->
+      |> Enum.reduce({offset_increment * min, %{}}, fn a, {offset, mapping} ->
         offset =
           offset +
             if MapSet.member?(set, a),
               do: 0,
-              else: 1
+              else: offset_increment
 
         b = offset + a
 
@@ -93,6 +79,42 @@ defmodule AdventOfCode.Day11 do
       get_lines(tail)
   end
 
-  def part2(_args) do
+  defp get_distance({{x1, y1}, {x2, y2}}) do
+    cond do
+      x1 == x2 ->
+        max(y1, y2) - min(y1, y2)
+
+      y1 == y2 ->
+        max(x1, x2) - min(x1, x2)
+
+      true ->
+        a = max(x1, x2) - min(x1, x2)
+        b = max(y1, y2) - min(y1, y2)
+
+        a + b
+    end
+  end
+
+  def part2(image, scale) do
+    galaxies =
+      image
+      |> String.split("\n")
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {line, y} ->
+        line
+        |> String.graphemes()
+        |> Enum.with_index()
+        |> Enum.flat_map(fn
+          {"#", x} -> [{x, y}]
+          _ -> []
+        end)
+      end)
+      |> Enum.sort()
+      |> expand_coordinates(scale)
+
+    galaxies
+    |> get_lines()
+    |> Enum.map(&get_distance/1)
+    |> Enum.reduce(0, &+/2)
   end
 end

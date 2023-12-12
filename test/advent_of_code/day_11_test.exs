@@ -22,11 +22,41 @@ defmodule AdventOfCode.Day11Test do
     assert result == 374
   end
 
-  @tag :skip
-  test "part2" do
-    input = nil
-    result = part2(input)
+  test "part2 - 10x" do
+    input = """
+    ...#......
+    .......#..
+    #.........
+    ..........
+    ......#...
+    .#........
+    .........#
+    ..........
+    .......#..
+    #...#.....
+    """
 
-    assert result
+    result = part2(input, 10)
+
+    assert result == 1030
+  end
+
+  test "part2 - 100x" do
+    input = """
+    ...#......
+    .......#..
+    #.........
+    ..........
+    ......#...
+    .#........
+    .........#
+    ..........
+    .......#..
+    #...#.....
+    """
+
+    result = part2(input, 100)
+
+    assert result == 8410
   end
 end
