@@ -5,35 +5,45 @@ defmodule AdventOfCode.Day12 do
     |> String.split("\n")
     |> Enum.map(&String.split/1)
     |> Enum.map(fn [record, check] ->
-      expected =
+      check =
         check
         |> String.split(",")
         |> Enum.map(&String.to_integer/1)
 
-      records =
-        record
-        |> String.graphemes()
-        |> build_records()
-
-      records
-      |> Enum.map(&count_defects/1)
-      |> Enum.count(fn actual -> actual == expected end)
+      record
+      |> String.graphemes()
+      |> build_records(check)
+      |> Enum.count()
     end)
     |> Enum.reduce(0, &+/2)
   end
 
-  defp build_records(suffix, prefix \\ "")
+  defp build_records(suffix, check, prefix \\ "")
 
-  defp build_records([], prefix), do: [prefix]
+  defp build_records([], check, prefix) do
+    if count_defects(prefix) == check,
+      do: [prefix],
+      else: []
+  end
 
-  defp build_records([head | tail], prefix) do
+  defp build_records([head | tail], check, prefix) do
     case head do
       "?" -> [".", "#"]
       c -> [c]
     end
     |> Enum.map(fn c -> prefix <> c end)
+    |> Enum.filter(fn prefix ->
+      actual =
+        prefix
+        |> count_defects()
+        |> then(fn a -> Enum.take(a, length(a) - 1) end)
+
+      actual
+      |> Enum.zip(check)
+      |> Enum.all?(fn {a, e} -> a == e end)
+    end)
     |> Enum.flat_map(fn prefix ->
-      build_records(tail, prefix)
+      build_records(tail, check, prefix)
     end)
   end
 
