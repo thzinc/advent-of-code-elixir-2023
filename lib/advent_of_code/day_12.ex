@@ -66,6 +66,24 @@ defmodule AdventOfCode.Day12 do
     |> Enum.reverse()
   end
 
-  def part2(_args) do
+  def part2(condition_records) do
+    condition_records
+    |> String.trim()
+    |> String.split("\n")
+    |> Enum.map(&String.split/1)
+    |> Enum.map(fn [record, check] ->
+      check =
+        [check, check, check, check, check]
+        |> Enum.join(",")
+        |> String.split(",")
+        |> Enum.map(&String.to_integer/1)
+
+      [record, record, record, record, record]
+      |> Enum.join("?")
+      |> String.graphemes()
+      |> build_records(check)
+      |> Enum.count()
+    end)
+    |> Enum.reduce(0, &+/2)
   end
 end
