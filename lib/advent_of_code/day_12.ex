@@ -33,23 +33,37 @@ defmodule AdventOfCode.Day12 do
     end
     |> Enum.map(fn c -> prefix <> c end)
     |> Enum.filter(fn prefix ->
-      actual =
-        prefix
-        |> count_defects()
-        |> then(fn a -> Enum.take(a, length(a) - 1) end)
+      prefix
+      |> count_defects()
+      |> case do
+        [] ->
+          []
 
-      actual
+        defects ->
+          defects
+          |> Enum.reverse()
+          |> tl()
+          |> Enum.reverse()
+      end
       |> Enum.zip(check)
-      |> Enum.all?(fn {a, e} -> a == e end)
+      |> Enum.all?(fn {actual, expected} -> actual == expected end)
     end)
-    |> Enum.flat_map(fn prefix ->
-      build_records(tail, check, prefix)
-    end)
+    |> Enum.flat_map(fn prefix -> build_records(tail, check, prefix) end)
   end
 
   defp count_defects(record) do
-    Regex.scan(~r/#+/, record)
-    |> Enum.map(fn [match] -> String.length(match) end)
+    record
+    |> String.graphemes()
+    |> Enum.reduce({0, []}, fn
+      ".", {0, defects} -> {0, defects}
+      ".", {acc, defects} -> {0, [acc | defects]}
+      "#", {acc, defects} -> {acc + 1, defects}
+    end)
+    |> then(fn
+      {0, defects} -> defects
+      {acc, defects} -> [acc | defects]
+    end)
+    |> Enum.reverse()
   end
 
   def part2(_args) do
