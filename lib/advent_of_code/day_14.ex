@@ -25,7 +25,37 @@ defmodule AdventOfCode.Day14 do
     |> Enum.reduce(0, &+/2)
   end
 
-  def part2(_args) do
+  def part2(platform) do
+    [first_row | _] =
+      rows =
+      platform
+      |> String.trim()
+      |> String.split("\n")
+      |> Enum.with_index()
+      |> Enum.map(fn {line, y} ->
+        line
+        |> String.graphemes()
+        |> Enum.with_index()
+        |> Enum.map(fn {type, x} -> {x, y, type} end)
+      end)
+
+    max_x = length(first_row)
+    max_y = length(rows)
+
+    %{
+      "#" => cubed_rocks,
+      "O" => round_rocks
+    } =
+      rows
+      |> Enum.flat_map(& &1)
+      |> Enum.group_by(fn {_, _, type} -> type end, fn {x, y, _} -> {x, y} end)
+      |> Map.take(["#", "O"])
+
+    cubed_rocks
+    |> IO.inspect(label: "cubed")
+
+    round_rocks
+    |> IO.inspect(label: "round")
   end
 
   defp rotate(rows) do
