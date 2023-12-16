@@ -45,6 +45,71 @@ defmodule AdventOfCode.Day16 do
     |> Enum.count()
   end
 
+  def part2(map, opts \\ [show_plot: false]) do
+    actions_by_coord =
+      map
+      |> String.trim()
+      |> String.split("\n")
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {row, y} ->
+        row
+        |> String.graphemes()
+        |> Enum.map(fn
+          "." -> &pass_through/1
+          "/" -> &reflect_ne_sw/1
+          "\\" -> &reflect_se_nw/1
+          "|" -> &split_horizontal/1
+          "-" -> &split_vertical/1
+        end)
+        |> Enum.with_index()
+        |> Enum.map(fn {fun, x} -> {{x, y}, fun} end)
+      end)
+      |> Enum.into(%{})
+
+    {max_x, max_y} =
+      extents =
+      actions_by_coord
+      |> Map.keys()
+      |> get_extents()
+
+    start_vectors =
+      [
+        Enum.flat_map(0..max_x, fn x ->
+          [
+            {{x, 0}, @south},
+            {{x, max_y}, @north}
+          ]
+        end),
+        Enum.flat_map(0..max_y, fn y ->
+          [
+            {{0, y}, @east},
+            {{max_x, y}, @west}
+          ]
+        end)
+      ]
+      |> Enum.flat_map(& &1)
+
+    coords =
+      start_vectors
+      |> Enum.reduce(MapSet.new(), fn start_vector, max_coords ->
+        coords =
+          walk(start_vector, actions_by_coord)
+          |> Enum.map(fn {coord, _} -> coord end)
+          |> MapSet.new()
+
+        if MapSet.size(max_coords) < MapSet.size(coords),
+          do: coords,
+          else: max_coords
+      end)
+
+    if Keyword.get(opts, :show_plot, false) do
+      plot(coords, extents)
+    end
+
+    coords
+    |> Enum.count()
+  end
+
   defp get_extents(coords) do
     coords
     |> Enum.reduce({0, 0}, fn {x1, y1}, {x2, y2} ->
@@ -142,8 +207,5 @@ defmodule AdventOfCode.Day16 do
     else
       pass_through(vector)
     end
-  end
-
-  def part2(_args) do
   end
 end

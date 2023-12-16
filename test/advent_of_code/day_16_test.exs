@@ -22,11 +22,22 @@ defmodule AdventOfCode.Day16Test do
     assert result == 46
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
+    input = """
+    .|...\\....
+    |.-.\\.....
+    .....|-...
+    ........|.
+    ..........
+    .........\\
+    ..../.\\\\..
+    .-.-/..|..
+    .|....-|.\\
+    ..//.|....
+    """
+
     result = part2(input)
 
-    assert result
+    assert result == 51
   end
 end
